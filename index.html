@@ -37,7 +37,7 @@ table {
       
 /* Set min and max width for the table */
 #timetableTable {
-    min-width: 600px;          /* Minimum width (adjust as needed) */
+    min-width: 800px;          /* Minimum width (adjust as needed) */
     max-width: 1300px;         /* Maximum width (adjust as needed) */
   	min-height: 400px;
     margin: 0 auto;            /* Center horizontally within container */
@@ -107,9 +107,9 @@ table {
 
     // Master timetable with courses per period (sample data)
     const masterTimetable = [
-        { day: 'Monday', start: 'P1', end: 'P1', courses: ['Further Maths' , 'Physics 2' , 'Economics 2' , 'Chemistry 2' , 'ChemistrySummit' , 'Business 1' , 'Art 1' , 'Art 2' , 'IB Philosophy' , 'IB Economics 1'] },
+        { day: 'Monday', start: 'P1', end: 'P1', courses: ['Further Maths' , 'Physics 2' , 'Economics 2' , 'Chemistry 2' , 'ChemistrySummit' , 'Business 1' , 'Art 1' , 'Art 2' , 'IB Philosophy' , 'IB Economics 1'], details: {'IB Philosophy': {teacher:'Matthew P.', room: 'B4041'}}},
         { day: 'Monday', start: 'P2', end: 'P3', courses: ['IB English' , 'AP English' , 'English L&L 1' , 'English L&L 2' , 'English L&L 3' , 'PE 2' , 'PE 4' , 'PE 6'] },
-        { day: 'Monday', start: 'P4', end: 'P5', courses: ['Physics 4' , 'Economics 4' , 'Chinese 1' , 'Chinese 2' , 'Geography' , 'IB Theatre' , 'IB Physics 2' , 'IB Chemistry'] },
+        { day: 'Monday', start: 'P4', end: 'P5', courses: ['Physics 4' , 'Economics 4' , 'Chinese 1' , 'Chinese 2' , 'Geography' , 'IB Theatre' , 'IB Physics 2' , 'IB Chemistry'], details: {'Geography': {teacher:'Douglas Horton', room: 'B4039'}} },
         { day: 'Monday', start: 'P6', end: 'P6', courses: ['Physics 1' , 'PhysicsSummit' , 'Economics 1' , 'Chemistry 1' , 'Music' , 'IB Physics 1' , 'IB Biology' , 'IB Geography' , 'IB Economics 2'] },
         { day: 'Monday', start: 'P7', end: 'P7', courses: ['Regular Maths 1' , 'Regular Maths 2' , 'Regular Maths 3' , 'Regular Maths 4' , 'Fast Maths 1' , 'Fast Maths 2' , 'IB Maths' , 'Advanced Maths'] },
         { day: 'Monday', start: 'P8', end: 'P8', courses: ['IB English' , 'AP English' , 'English L&L 1' , 'English L&L 2' , 'English L&L 3' , 'IPQ 5' , 'IPQ 6' , 'IPQ 7'] },
@@ -125,7 +125,7 @@ table {
         { day: 'Wednesday', start: 'P3', end: 'P4', courses: ['Regular Maths 1' , 'Regular Maths 2' , 'Regular Maths 3' , 'Regular Maths 4' , 'Fast Maths 1' , 'Fast Maths 2' , 'IB Maths' , 'Advanced Maths'] },
         { day: 'Wednesday', start: 'P5', end: 'P5', courses: ['ESL 1' , 'ESL 3' , 'IPQ 1' , 'IPQ 2' , 'IPQ 3' , 'IPQ 4' , 'IB TOK' , 'ESL 2'] },
         { day: 'Wednesday', start: 'P6', end: 'P7', courses: ['Physics 4' , 'Economics 4' , 'Chinese 1' , 'Chinese 2' , 'Geography' , 'IB Theatre' , 'IB Physics 2' , 'IB Chemistry'] },
-        { day: 'Wednesday', start: 'P8', end: 'P9', courses: ['Further Maths' , 'Physics 2' , 'Economics 2' , 'Chemistry 2' , 'ChemistrySummit' , 'Business 1' , 'Art 1' , 'Art 2' , 'IB Philosophy' , 'IB Economics 1'] },
+        { day: 'Wednesday', start: 'P8', end: 'P9', courses: ['Further Maths' , 'Physics 2' , 'Economics 2' , 'Chemistry 2' , 'ChemistrySummit' , 'Business 1' , 'Art 1' , 'Art 2' , 'IB Philosophy' , 'IB Economics 1'], details: {'IB Philosophy': {teacher:'Douglas Horton', room: 'B4039'}} },
         { day: 'Thursday', start: 'P1', end: 'P2', courses: ['Physics 4' , 'Economics 4' , 'Chinese 1' , 'Chinese 2' , 'Geography' , 'IB Theatre' , 'IB Physics 2' , 'IB Chemistry'] },
         { day: 'Thursday', start: 'P3', end: 'P3', courses: ['University Counselling'] },
         { day: 'Thursday', start: 'P4', end: 'P5', courses: ['Physics 3' , 'Economics 3' , 'EconomicsSummit' , 'Business 2' , 'Chemistry 3' , 'Biology' , 'Computer Sci' , 'IB Chinese'] },
@@ -133,7 +133,7 @@ table {
         { day: 'Thursday', start: 'P8', end: 'P9', courses: ['Physics 1' , 'PhysicsSummit' , 'Economics 1' , 'Chemistry 1' , 'Music' , 'IB Physics 1' , 'IB Biology' , 'IB Geography' , 'IB Economics 2'] },
         { day: 'Friday', start: 'P1', end: 'P1', courses: ['Assembly'] },
         { day: 'Friday', start: 'P2', end: 'P2', courses: ['House'] },
-        { day: 'Friday', start: 'P3', end: 'P3', courses: ['Further Maths' , 'Physics 2' , 'Economics 2' , 'Chemistry 2' , 'ChemistrySummit' , 'Business 1' , 'Art 1' , 'Art 2' , 'IB Philosophy' , 'IB Economics 1'] },
+        { day: 'Friday', start: 'P3', end: 'P3', courses: ['Further Maths' , 'Physics 2' , 'Economics 2' , 'Chemistry 2' , 'ChemistrySummit' , 'Business 1' , 'Art 1' , 'Art 2' , 'IB Philosophy' , 'IB Economics 1'], details: {'IB Philosophy': {teacher:'Matthew P.', room: 'B4041'}} },
         { day: 'Friday', start: 'P4', end: 'P5', courses: ['Physics 1' , 'PhysicsSummit' , 'Economics 1' , 'Chemistry 1' , 'Music' , 'IB Physics 1' , 'IB Biology' , 'IB Geography' , 'IB Economics 2'] },
         { day: 'Friday', start: 'P6', end: 'P7', courses: ['ESL 1' , 'ESL 2' , 'ESL 3' , 'PE 1' , 'PE 3' , 'PE 5' , 'PE 7'] },
         { day: 'Friday', start: 'P8', end: 'P8', courses: ['IB English' , 'AP English' , 'English L&L 1' , 'English L&L 2' , 'English L&L 3' , 'IPQ 5' , 'IPQ 6' , 'IPQ 7'] },
@@ -168,8 +168,8 @@ const classDetails = {
 'ESL 2': { teacher: 'Sally Guo', room: 'B2041'},
 'ESL 3': { teacher: 'Sherry Yuan', room: 'B2042'},
 'Fast Maths 1': { teacher: 'Sheryl Shane Canite', room: 'B3041'},
-'Fast Maths 2': { teacher: 'Alice Mei', room: 'B3004'},
-'Geography': { teacher: 'Douglas Horton', room: 'B4039'},
+'Fast Maths 2': { teacher: 'Alice Mei', room: 'B3043'},
+'Geography': { teacher: 'Douglas Horton', room: 'B1034'},
 'IB Biology': { teacher: 'Lily Hung', room: 'B4012'},
 'IB Chemistry': { teacher: 'Khurram Shezad', room: 'B4004'},
 'IB Chinese': { teacher: 'Miya Yang', room: 'B4011'},
@@ -177,7 +177,7 @@ const classDetails = {
 'IB Economics 2': { teacher: 'Kieran Foxe', room: 'B4038'},
 'IB English': { teacher: 'Warwick Midlane', room: 'B2039'},
 'IB Geography': { teacher: 'Alex Oniango', room: 'B4039'},
-'IB Philosophy': { teacher: 'Matthew Peatman', room: 'B4041'},
+'IB Philosophy': { teacher: 'Matthew Peatman', room: 'B4039'},
 'IB Physics 1': { teacher: 'Logan Tian', room: 'B3005'},
 'IB Physics 2': { teacher: 'Logan Tian', room: 'B3005'},
 'IB Maths': { teacher: 'Shahid Anwar', room: 'B3007'},
@@ -187,9 +187,9 @@ const classDetails = {
 'IPQ 2': { teacher: 'Jenny Shen', room: 'B3010'},
 'IPQ 3': { teacher: 'Carol Fu', room: 'B3011'},
 'IPQ 4': { teacher: 'Rob Hollingsworth', room: 'B2039'},
-'IPQ 5': { teacher: 'Kelly Fang', room: 'B3009'},
-'IPQ 6': { teacher: 'Jenny Shen', room: 'B3010'},
-'IPQ 7': { teacher: 'Carol Fu', room: 'B3011'},
+'IPQ 5': { teacher: 'Kelly Fang', room: 'B4009'},
+'IPQ 6': { teacher: 'Jenny Shen', room: 'B2042'},
+'IPQ 7': { teacher: 'Carol Fu', room: 'B4011'},
 'Music': { teacher: 'Andy Clark', room: 'B2003'},
 'PE 1': { teacher: 'Llyod Pique', room: 'Gym'},
 'PE 2': { teacher: 'Abie Rakgoale', room: 'Gym'},
@@ -455,20 +455,29 @@ function generateTimetable() {
 }
 
 function getStudentContent(slot, student) {
+    // Get student's enrolled courses as array
     const enrolledCourses = Array.isArray(student.enrollments)
         ? student.enrollments
         : Object.values(student.enrollments);
 
+    // Find course student has in this slot's courses
     const matchedCourse = slot.courses.find(course => enrolledCourses.includes(course));
 
-    if (matchedCourse) {
-        if (matchedCourse in classDetails) {
-            const details = classDetails[matchedCourse];
-            return `${matchedCourse}<br>${details.teacher}<br> ${details.room}`;
-        }
-        return matchedCourse;
+    if (!matchedCourse) return 'No Class';
+
+    // Try to find details in slot.details
+    if (slot.details && slot.details[matchedCourse]) {
+        const details = slot.details[matchedCourse];
+        return `${matchedCourse}<br>${details.teacher} <br> ${details.room}`;
     }
-    return 'No Class';
+
+    // Fall back to global classDetails if available
+    if (matchedCourse in classDetails) {
+        const details = classDetails[matchedCourse];
+        return `${matchedCourse}<br>${details.teacher} <br> ${details.room}</small>`;
+    }
+
+    return matchedCourse;
 }
 
 
