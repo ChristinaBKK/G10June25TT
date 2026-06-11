@@ -113,10 +113,11 @@ Deploy the backend once:
 SUPABASE_URL="https://aleqesajbbcmufcydgqy.supabase.co"
 SUPABASE_SERVICE_ROLE_KEY="<your-service-role-key>"
 ADMIN_COURSE_CHANGE_PASSWORD="<shared-admin-password>"
-ATTENDANCE_DATABASE_URL="postgres://flyadmin:pass123@localhost:5433/postgres"
+ATTENDANCE_SYNC_URL="https://attendance-app-spring-forest-2979.fly.dev"
+ATTENDANCE_SYNC_SECRET="<shared-sync-secret>"
 ```
 
-`ATTENDANCE_DATABASE_URL` is required for attendance sync after admin course changes.
+Teacher names are validated by the hosted Fly sync endpoint with exact `teachers.name` matching.
 `ATTENDANCE_SYNC_MODE` is not used by this project and should be omitted.
 
 2. Deploy the function without JWT enforcement because the shared password is the gate here:

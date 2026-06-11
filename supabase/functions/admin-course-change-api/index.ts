@@ -66,7 +66,6 @@ const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || '';
 const configuredPassword = Deno.env.get('ADMIN_COURSE_CHANGE_PASSWORD') || '';
 const attendanceSyncUrl = Deno.env.get('ATTENDANCE_SYNC_URL') || '';
 const attendanceSyncSecret = Deno.env.get('ATTENDANCE_SYNC_SECRET') || '';
-const attendanceDbUrl = Deno.env.get('ATTENDANCE_DATABASE_URL') || '';
 
 if (!supabaseUrl || !serviceRoleKey || !configuredPassword) {
   throw new Error('SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, and ADMIN_COURSE_CHANGE_PASSWORD must be set for admin-course-change-api.');
@@ -82,13 +81,6 @@ const supabase = createClient(supabaseUrl, serviceRoleKey, {
 const directDb = supabaseDbUrl
   ? postgres(supabaseDbUrl, {
       ssl: 'require',
-    })
-  : null;
-
-const attendanceDb = attendanceDbUrl
-  ? postgres(attendanceDbUrl, {
-      ssl: 'require',
-      connect_timeout: 5,
     })
   : null;
 
@@ -1314,7 +1306,7 @@ async function loadAttendanceSyncPayload(studentId: string) {
       startTime: formatAttendanceTime(String(startPeriod?.starts_at || '')),
       endTime: formatAttendanceTime(String(endPeriod?.ends_at || '')),
       roomCode: String(entry.room || '').trim(),
-      teacherName: String(entry.teacher || '').trim(),
+      teacherName: String(entry.teacher || ''),
       type: 'revision',
     };
   }).filter((session) => session.name && session.date && session.startTime && session.endTime);
@@ -1335,26 +1327,27 @@ async function loadAttendanceSyncPayload(studentId: string) {
     ]),
   ).values()];
 
-  const attendanceTeacherByName = await loadAttendanceTeacherByName();
+  const malformedTeacherNames = new Set<string>();
 
   const attendanceSessions = uniqueSessions.flatMap((session) => {
+    const rawTeacherName = String(session.teacherName || '');
+    if (rawTeacherName && rawTeacherName !== rawTeacherName.trim()) {
+      malformedTeacherNames.add(rawTeacherName);
+      return [];
+    }
+
     if (isAttendancePlaceholderSession(session)) {
       return [];
     }
 
-    const teacherNames = session.teacherName
-      .split(/\s*\/\s*/)
-      .map((teacher) => teacher.trim())
-      .filter(Boolean);
-    const teacherId = teacherNames
-      .map((teacher) => resolveAttendanceTeacherId(teacher, attendanceTeacherByName))
-      .find(Boolean) || '';
-
-    if (attendanceTeacherByName && !teacherId) {
-      return [];
-    }
-    return [{ ...session, teacherId }];
+    return [{ ...session, teacherId: '' }];
   });
+
+  if (malformedTeacherNames.size > 0) {
+    const error = new Error(`Attendance sync blocked because these Supabase teacher names contain leading or trailing whitespace: ${[...malformedTeacherNames].sort((left, right) => left.localeCompare(right)).map((teacher) => JSON.stringify(teacher)).join(', ')}. Fix the stored teacher metadata before saving.`);
+    error.statusCode = 400;
+    throw error;
+  }
 
   return {
     student: {
@@ -1379,54 +1372,6 @@ function buildAttendanceSessionFields(courseName: string) {
     subject: courseName,
     paperCode: '',
   };
-}
-
-async function loadAttendanceTeacherByName(): Promise<Map<string, string> | null> {
-  if (!attendanceDb) {
-    return null;
-  }
-  try {
-    const rows = await attendanceDb`
-      SELECT id, name
-      FROM teachers
-      WHERE id IS NOT NULL
-        AND name IS NOT NULL
-    `;
-    const byName = new Map<string, string>();
-    for (const row of rows || []) {
-      const teacherName = String(row.name || '').trim();
-      const teacherId = String(row.id || '').trim();
-      if (!teacherName || !teacherId) {
-        continue;
-      }
-      byName.set(teacherName, teacherId);
-      byName.set(canonicalTeacherIdentityKey(teacherName), teacherId);
-    }
-    return byName;
-  } catch {
-    // If the direct DB query fails (e.g. wrong schema), fall through to placeholder-only filtering
-    return null;
-  }
-}
-
-function resolveAttendanceTeacherId(teacherName: string, teacherByName: Map<string, string> | null) {
-  if (!teacherByName) {
-    return '';
-  }
-  const trimmed = String(teacherName || '').trim();
-  if (!trimmed) {
-    return '';
-  }
-  return teacherByName.get(trimmed)
-    || teacherByName.get(canonicalTeacherIdentityKey(trimmed))
-    || '';
-}
-
-function canonicalTeacherIdentityKey(value: string) {
-  return String(value || '')
-    .trim()
-    .replace(/\s+/g, ' ')
-    .toLowerCase();
 }
 
 function isAttendancePlaceholderSession(session: { name: string; teacherName: string }) {
@@ -1516,8 +1461,7 @@ function buildSyncDiagnostics() {
   return {
     attendanceSyncUrl: redactUrl(attendanceSyncUrl),
     attendanceSyncSecretConfigured: Boolean(attendanceSyncSecret),
-    attendanceDatabaseUrl: redactUrl(attendanceDbUrl),
-    attendanceDatabaseConfigured: Boolean(attendanceDbUrl),
+    teacherNameValidation: 'fly-sync-endpoint-exact-name-match',
   };
 }
 
